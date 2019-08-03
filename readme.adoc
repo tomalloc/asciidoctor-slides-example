@@ -1,0 +1,9 @@
+= asciidoctor slides example
+
+
+== build
+
+[source,ruby]
+----
+gradle clean asciidoctorRevealJs
+----

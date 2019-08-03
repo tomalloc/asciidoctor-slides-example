@@ -1,0 +1,3 @@
+rootProject.name = 'asciidoctor-slides-example'
+
+//include buildSrc
