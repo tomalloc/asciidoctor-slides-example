@@ -15,25 +15,24 @@ buildscript {
 
 
 plugins {
- id "org.asciidoctor.jvm.revealjs" version '3.0.0-alpha.3'
+ id "org.asciidoctor.jvm.revealjs" version '3.2.0'
 //  id "org.asciidoctor.jvm.gems" version '3.0.0-alpha.3'
-   id "org.asciidoctor.decktape" version "3.0.0-alpha.3"
+   id "org.asciidoctor.decktape" version "3.2.0"
 
 }
 
 
 
 asciidoctorj {
-    version = '2.1.0'
-    jrubyVersion = '9.2.7.0'
+    version = '2.3.0'
+    jrubyVersion = '9.2.11.1'
     options = [doctype: 'book', ruby: 'erubis']
     attributes = [ 'source-highlighter': 'highlightjs']
     logLevel 'DEBUG'
     modules{
-      // diagram{
-      //   version '1.5.18'
-      // }
-
+       diagram{
+         version '2.0.2'
+       }
     }
 }
 
@@ -42,16 +41,19 @@ asciidoctorj {
 repositories {
 //  mavenCentral()
   maven { url 'https://maven.aliyun.com/repository/public' }
-  maven { url 'http://rubygems-proxy.torquebox.org/releases' }
+  maven {
+      allowInsecureProtocol true
+      url 'http://rubygems-proxy.torquebox.org/releases'
+  }
 }
 
 revealjs {
-  version = '2.0.0' 
+  version = '4.0.1'
 
   templateGitHub {  
     organisation = 'hakimel'
     repository = 'reveal.js'
-    tag = '3.7.0'
+    tag = '3.9.2'
   }
 }
 
@@ -86,3 +88,6 @@ revealjsPlugins {
 // https://github.com/asciidoctor/asciidoctor-gradle-plugin
 
 
+task slide {
+    dependsOn asciidoctorRevealJs
+}
