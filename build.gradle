@@ -1,38 +1,46 @@
 buildscript {
-  ext {
-    gradleVersionsVersion = '0.20.0'
-    downloadVersion = '3.4.3'
-  }
-  repositories {
-    mavenCentral()
-    maven{
-      url "https://plugins.gradle.org/m2/"
+    ext {
+        gradleVersionsVersion = '0.20.0'
+        downloadVersion = '3.4.3'
     }
-  }
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
 }
 
 // https://asciidoctor.github.io/asciidoctor-gradle-plugin/development-3.x/user-guide/
 
 
 plugins {
- id "org.asciidoctor.jvm.revealjs" version '3.2.0'
+    id "org.asciidoctor.jvm.revealjs" version '3.2.0'
 //  id "org.asciidoctor.jvm.gems" version '3.0.0-alpha.3'
-   id "org.asciidoctor.decktape" version "3.2.0"
+//    id "org.asciidoctor.decktape" version "3.2.0"
+    id "com.github.salomonbrys.gradle.sass" version "1.2.0"
 
 }
 
+
+sassCompile{
+    source = fileTree("src/docs/asciidoc/style")
+//    style = compressed
+    outputDir=file("$buildDir/sass")
+
+}
 
 
 asciidoctorj {
     version = '2.3.0'
     jrubyVersion = '9.2.11.1'
-    options = [doctype: 'book', ruby: 'erubis']
-    attributes = [ 'source-highlighter': 'highlightjs']
+//    options = [doctype: 'book', ruby: 'erubis']
+
     logLevel 'DEBUG'
-    modules{
-       diagram{
-         version '2.0.2'
-       }
+    modules {
+        diagram {
+            version '2.0.2'
+        }
     }
 }
 
@@ -40,49 +48,70 @@ asciidoctorj {
 
 repositories {
 //  mavenCentral()
-  maven { url 'https://maven.aliyun.com/repository/public' }
-  maven {
-      allowInsecureProtocol true
-      url 'http://rubygems-proxy.torquebox.org/releases'
-  }
+    maven { url 'https://maven.aliyun.com/repository/public' }
+    maven {
+        allowInsecureProtocol true
+        url 'http://rubygems-proxy.torquebox.org/releases'
+    }
 }
 
 revealjs {
-  version = '4.0.1'
+    version = '4.0.1'
 
-  templateGitHub {  
-    organisation = 'hakimel'
-    repository = 'reveal.js'
-    tag = '3.9.2'
-  }
+    templateGitHub {
+        organisation = 'hakimel'
+        repository = 'reveal.js'
+        tag = '3.9.2'
+    }
 }
 
 asciidoctorRevealJs {
-  revealjsOptions { 
-    controls = true
-    mouseWheel= true
-    slideNumber = true
-    // processBar = true
-    pushToHistory=true
+    dependsOn sassCompile
+    outputDir "$buildDir/slide"
+    revealjsOptions {
+        controls = true
+        mouseWheel = true
+        fragments = true
+        slideNumber = true
+        // processBar = true
+        pushToHistory = true
+        customThemeLocation = "$buildDir/sass/ox-theme.css"
+//        highlightJsThemeLocation = "$buildDir/sass/dracula.css"
+        highlightJsThemeLocation = "src/docs/asciidoc/style/dracula.css"
 
-  }
-  sources {
-    include 'revealjs.adoc'
-  }
-  plugins 'rajgoel/chart/Chart.js'
+    }
+
+    sources {
+        include new File("$project.rootDir/src/docs/asciidoc").list({dir,name-> name.endsWith(".adoc")})
+    }
+    plugins 'rajgoel/chart/Chart.js'
 //    pluginConfigurationFile 'src/docs/asciidoc/empty-plugin-configuration.js'
 
-  toggleBuiltinPlugin 'pdf', true
-  toggleBuiltinPlugin 'notes', false
+    toggleBuiltinPlugin 'pdf', true
+    toggleBuiltinPlugin 'notes', false
+
+    clearSecondarySources()
+    attributes = [
+        //            'source-highlighter': 'highlightjs',
+//        'highlightjsdir': 'reveal.js/plugin/highlight',
+//        https://github.com/asciidoctor/asciidoctor-reveal.js/blob/5c2683d0ee1838050885bf9e00464187d2c82517/templates/document.html.slim
+//        font-awesome
+//            'iconfont-remote':null,
+        'cdn_base':'lib',
+        'icons': 'font',
+        'partials': file('src/docs/asciidoc/partials/')
+    ]
 }
+//Request URL: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js
+
 
 
 revealjsPlugins {
-  github 'rajgoel', {
-    organisation = 'rajgoel'
-    repository = 'reveal.js-plugins'
-    branch = 'master'
-  }
+    github 'rajgoel', {
+        organisation = 'rajgoel'
+        repository = 'reveal.js-plugins'
+        branch = 'master'
+    }
 }
 
 // https://github.com/asciidoctor/asciidoctor-gradle-plugin
