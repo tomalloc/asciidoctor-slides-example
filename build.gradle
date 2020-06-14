@@ -18,6 +18,7 @@ plugins {
  id "org.asciidoctor.jvm.revealjs" version '3.2.0'
 //  id "org.asciidoctor.jvm.gems" version '3.0.0-alpha.3'
    id "org.asciidoctor.decktape" version "3.2.0"
+  id "java"
 
 }
 
@@ -27,7 +28,8 @@ asciidoctorj {
     version = '2.3.0'
     jrubyVersion = '9.2.11.1'
     options = [doctype: 'book', ruby: 'erubis']
-    attributes = [ 'source-highlighter': 'highlightjs']
+    attributes = [ 'source-highlighter': 'highlightjs',
+                   'modeldir':"$rootDir/src/main/java"]
     logLevel 'DEBUG'
     modules{
        diagram{
@@ -67,7 +69,7 @@ asciidoctorRevealJs {
 
   }
   sources {
-    include 'revealjs.adoc'
+    include 'objenesis.adoc'
   }
   plugins 'rajgoel/chart/Chart.js'
 //    pluginConfigurationFile 'src/docs/asciidoc/empty-plugin-configuration.js'
